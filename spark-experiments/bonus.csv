@@ -1,0 +1,11 @@
+DepositNumber,deposit type,name,amount,description
+1001,1,reza,5000,Initial deposit
+1002,1,Jane Smith,15000,Opening account
+1003,2,Bob Johnson,2500,Monthly saving
+1004,1,Lisa Wilson,15000,One-year fixed deposit
+1005,2,reza Lee,3000,Initial deposit
+1006,2,Paul Walker,2000,New account opening
+1007,1,Alice Brown,15000,Three-year term
+1008,2,Maria Davis,4000,Monthly saving
+1009,2,James Wilson,1200,Opening account
+1010,2,Linda Martin,20000,Five-year term
