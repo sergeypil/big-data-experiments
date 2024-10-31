@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'net.serg'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = '1.11'
+mainClassName = 'net.serg.ServerTrafficAnalysisJob'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //implementation 'org.apache.spark:spark-core_2.12:3.5.0'
+    implementation 'org.apache.spark:spark-sql_2.12:3.5.0'
+    //implementation 'org.apache.hadoop:hadoop-common:3.3.4'
+    implementation 'org.apache.hadoop:hadoop-aws:3.3.4' 
+//    implementation 'com.amazonaws:aws-java-sdk-bundle:1.12.262'
+    
+//    testImplementation platform('org.junit:junit-bom:5.9.1')
+//    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    def lombokVersion = "1.18.30"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
+    
+}
+
+test {
+    useJUnitPlatform()
+}
+
+shadowJar {
+    configurations = [
+            project.configurations.runtimeClasspath,
+    ]
+    zip64 true
+}

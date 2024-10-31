@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyKinesisDataStream:
+    Type: 'AWS::Kinesis::Stream'
+    Properties:
+      Name: MetricsKinesisStream
+      ShardCount: 1
+      StreamModeDetails:
+        StreamMode: PROVISIONED
+  MetricsOutputDataStream:
+    Type: 'AWS::Kinesis::Stream'
+    Properties:
+      Name: MetricsOutputDataStream
+      ShardCount: 1
+      StreamModeDetails:
+        StreamMode: PROVISIONED
+  FirehoseDeliveryStream:
+    Type: "AWS::KinesisFirehose::DeliveryStream"
+    Properties:
+      DeliveryStreamName: MetricsOutputKinesisToS3
+      DeliveryStreamType: KinesisStreamAsSource
+      KinesisStreamSourceConfiguration:
+        KinesisStreamARN: !GetAtt MetricsOutputDataStream.Arn
+        RoleARN: arn:aws:iam::321721842202:role/s3-kinesis-full-access
+      ExtendedS3DestinationConfiguration:
+        BucketARN: arn:aws:s3:::spil-metrics-kinesis-output
+        RoleARN: arn:aws:iam::321721842202:role/s3-kinesis-full-access
+        BufferingHints:
+          IntervalInSeconds: 60
+        DynamicPartitioningConfiguration:
+          Enabled: true
+        Prefix: !Sub 'data/!{partitionKeyFromQuery:componentName}/'
+        ErrorOutputPrefix: !Sub 'errors/!{firehose:error-output-type}/'
+        ProcessingConfiguration:
+          Enabled: true
+          Processors:
+            - Type: MetadataExtraction
+              Parameters:
+                - ParameterName: MetadataExtractionQuery
+                  ParameterValue: "{componentName: .componentName}"
+                - ParameterName: JsonParsingEngine
+                  ParameterValue: "JQ-1.6"
+            - Type: AppendDelimiterToRecord
+              Parameters:
+                - ParameterName: Delimiter
+                  ParameterValue: "\\n"
