@@ -25,7 +25,8 @@ public class MetricEventAggregateFunction implements AggregateFunction<MetricEve
             accumulator.setMaxValue(value.getValue());
             accumulator.setToTimestamp(value.getPublicationTimestamp());
         }
-        if (value.getValue() < accumulator.getMinValue()) {
+        if (value.getValue() > 0.0 && accumulator.getMinValue() == 0
+            || value.getValue() < accumulator.getMinValue() && accumulator.getMinValue() != 0) {
             accumulator.setMinValue(value.getValue());
             accumulator.setFromTimestamp(value.getPublicationTimestamp());
         }
